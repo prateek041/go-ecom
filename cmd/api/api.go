@@ -1,30 +1,34 @@
 package api
 
 import (
-	"fmt"
-	"log"
+	"context"
 	"net/http"
 
 	"github.com/gorilla/mux"
 )
 
 type ApiServer struct {
-	addr string
-	// TODO: Add database string here as well
+	server http.Server
 }
 
 func NewApiServer(addr string) *ApiServer {
+	server := mux.NewRouter()
+	apiRouter := server.PathPrefix("api/v1").Subrouter()
+
+	// TODO: Define it more with options like read, write and idle timeouts
 	return &ApiServer{
-		addr: addr,
+		server: http.Server{
+			Addr:    addr,
+			Handler: apiRouter,
+		},
 	}
 }
 
-func (s *ApiServer) Start() {
-	server := mux.NewRouter()
-	apiRouter := server.PathPrefix("api/v1").Subrouter()
-	fmt.Printf("Starting server on addr %s", s.addr)
-	err := http.ListenAndServe(s.addr, apiRouter)
-	if err != nil {
-		log.Fatal("Error starting the server", err)
-	}
+func (s *ApiServer) Run() error {
+	// Register handlers and database connections
+	return s.server.ListenAndServe()
+}
+
+func (s *ApiServer) ShutDown(ctx context.Context) error {
+	return s.server.Shutdown(ctx)
 }
