@@ -14,7 +14,7 @@ const addr = ":9090"
 
 func main() {
 	logger := log.New(os.Stdout, "product-api", log.LstdFlags)
-	server := api.NewApiServer(addr)
+	server := api.NewApiServer(addr, logger)
 
 	go func() {
 		logger.Printf("Starting Server on addr %s", addr)
