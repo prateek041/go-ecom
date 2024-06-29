@@ -3,10 +3,13 @@ package user
 import (
 	"log"
 	"net/http"
+
+	"github.com/prateek041/ecom-go/types"
 )
 
 type UserHandler struct {
-	l *log.Logger
+	storage types.UserStore
+	l       *log.Logger
 }
 
 func NewUserHandler(l *log.Logger) *UserHandler {

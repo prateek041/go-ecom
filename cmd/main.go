@@ -12,8 +12,6 @@ import (
 	"github.com/prateek041/ecom-go/db"
 )
 
-const addr = ":9090"
-
 func main() {
 	logger := log.New(os.Stdout, "product-api", log.LstdFlags)
 
@@ -21,10 +19,10 @@ func main() {
 	if err != nil {
 		logger.Fatalf("error initializing storage: %v", err)
 	}
-	server := api.NewApiServer(addr, logger, storageProvider.Client)
+	server := api.NewApiServer(configs.ENV.Port, logger, storageProvider.Client)
 
 	go func() {
-		logger.Printf("Starting Server on addr %s", addr)
+		logger.Printf("Starting Server on addr %s", configs.ENV.Port)
 		err := server.Run()
 		if err != nil {
 			logger.Fatal("Shutting down server", err)
