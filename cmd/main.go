@@ -8,13 +8,20 @@ import (
 	"time"
 
 	"github.com/prateek041/ecom-go/cmd/api"
+	"github.com/prateek041/ecom-go/configs"
+	"github.com/prateek041/ecom-go/db"
 )
 
 const addr = ":9090"
 
 func main() {
 	logger := log.New(os.Stdout, "product-api", log.LstdFlags)
-	server := api.NewApiServer(addr, logger)
+
+	storageProvider, err := db.NewStorage(configs.ENV.DBUri)
+	if err != nil {
+		logger.Fatalf("error initializing storage: %v", err)
+	}
+	server := api.NewApiServer(addr, logger, storageProvider.Client)
 
 	go func() {
 		logger.Printf("Starting Server on addr %s", addr)
@@ -33,6 +40,6 @@ func main() {
 
 	// ignoring cancel function
 	tc, _ := context.WithTimeout(context.Background(), time.Second*30)
-	err := server.ShutDown(tc)
+	err = server.ShutDown(tc)
 	logger.Fatal("Error shutting down server", err)
 }

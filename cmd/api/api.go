@@ -7,15 +7,17 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/prateek041/ecom-go/services/test"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type ApiServer struct {
 	server    *http.Server
 	l         *log.Logger
 	apiRouter *mux.Router
+	dbClient  *mongo.Client
 }
 
-func NewApiServer(addr string, l *log.Logger) *ApiServer {
+func NewApiServer(addr string, l *log.Logger, dbClient *mongo.Client) *ApiServer {
 	server := mux.NewRouter()
 	apiRouter := server.PathPrefix("/api/v1").Subrouter()
 
@@ -27,6 +29,7 @@ func NewApiServer(addr string, l *log.Logger) *ApiServer {
 		},
 		l:         l,
 		apiRouter: apiRouter,
+		dbClient:  dbClient,
 	}
 }
 
